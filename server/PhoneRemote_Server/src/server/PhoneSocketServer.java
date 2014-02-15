@@ -12,14 +12,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class PhoneSocketServer {
-
-	private static DataTransformer Optimus;
-
 	public PhoneSocketServer(PhoneRemote controller) {
 		ServerSocket myService = null;
 		Socket phoneSocket = null;
 		BufferedReader phoneData = null;
-		Optimus = new DataTransformer();
 		try {
 			myService = new ServerSocket(3000);
 			phoneSocket = myService.accept();
