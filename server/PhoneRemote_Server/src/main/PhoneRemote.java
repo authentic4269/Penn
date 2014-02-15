@@ -28,6 +28,7 @@ public class PhoneRemote {
 	SwingOrientation gui;
 	static Robot bot;
 	final double delay = .02;
+	private Mouse mouse = null;
 	
 	
 	public static void main(String[] args) throws AWTException  {
@@ -53,7 +54,6 @@ public class PhoneRemote {
 			controller.smoothDenom += controller.smooth[i];
 		}
 		PhoneSocketServer connection = new PhoneSocketServer(controller);
-
 	}
 	
 	public PhoneRemote() throws AWTException{
@@ -77,7 +77,10 @@ public class PhoneRemote {
 			}
 			orientation[i] = smoothNumer / smoothDenom;
 		}
-		refreshMouse();
+		if (mouse != null)
+		{
+			mouse.updateOrientation(orientation);
+		}
 	}
 
 	public void updateAcceleration(double[] vals) {
@@ -92,6 +95,7 @@ public class PhoneRemote {
 		if (calibrate == 3)
 		{
 			gui.finish();
+			mouse = new Mouse(canonicalOrientations);
 		}
 		else 
 		{

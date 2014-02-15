@@ -35,7 +35,7 @@ public class Connection implements Runnable, SensorEventListener {
 	public void run() {
 		try {
 			mRotationVectorSensor = manager
-					.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+					.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 			mLinearAccelerationSensor = manager
 					.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
@@ -80,7 +80,7 @@ public class Connection implements Runnable, SensorEventListener {
 		// that we received the proper event
 		JSONObject ob = new JSONObject();
 		int i;
-		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+		if (event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
 			try {
 				ob.put("type", 0);
 				JSONArray arr = new JSONArray();

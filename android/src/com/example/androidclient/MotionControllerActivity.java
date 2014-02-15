@@ -43,7 +43,7 @@ public class MotionControllerActivity extends Activity {
 		ImageButton bt = (ImageButton) findViewById(R.id.imageButton1);
 		//this.conn.start();
 		
-		this.conn.start();
+		
 		bt.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -52,6 +52,7 @@ public class MotionControllerActivity extends Activity {
 			}
 			
 		});
+		this.conn.start();
 
 	}
 
