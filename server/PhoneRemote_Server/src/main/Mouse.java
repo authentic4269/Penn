@@ -43,7 +43,7 @@ public class Mouse {
 		int newXCoord = (int) Math.floor((currentPosition[0]/screenWidth)*width);
 		int newYCoord = (int) (height - Math.floor((currentPosition[1]/screenHeight)*height));
 		System.out.println("x:" + newXCoord + ", y:" + newYCoord);
-		//r.mouseMove(newX, newYCoord);
+		r.mouseMove(newXCoord, newYCoord);
 	}
 
 }

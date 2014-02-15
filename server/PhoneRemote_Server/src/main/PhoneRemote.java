@@ -141,11 +141,11 @@ public class PhoneRemote {
 			cur.values.add(vals[i]);
 			cur.timeStamp = time;
 			smoothNumer = 0.0;
-			for (j = 0; j < 11; j++)
+			for (j = 0; j < 10; j++)
 			{
-				smoothNumer += smooth[j] * vals[i];
+				smoothNumer += smooth2[j] * vals[i];
 			}
-			smoothNumer /= smoothDenom;
+			smoothNumer /= smooth2Denom;
 			curAcceleration[i] = smoothNumer;
 		
 			double[] currentVelocity = updateVelocity(lastAcceleration, curAcceleration, prevTime, time);
@@ -178,7 +178,7 @@ public class PhoneRemote {
 	}
 	
 	private double trapezoidArea(double start, double end, double startTime, double endTime){
-		return (start + ((end - start)/2))*(endTime - startTime)*1000;
+		return (start + ((end - start)/2))*(endTime - startTime)/1000;
 	}
 
 	public void calibrate() {
