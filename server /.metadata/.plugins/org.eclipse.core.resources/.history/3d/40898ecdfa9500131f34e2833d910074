@@ -1,0 +1,33 @@
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.*;
+
+public class DataParser {
+	private DataTransformer Optimus;
+	
+	public static void main(String[] args){
+		ServerSocket myService= null;
+		Socket phoneSocket= null;
+		DataInputStream phoneData= null;
+		try{
+			myService= new ServerSocket(1024);
+			phoneSocket= myService.accept();
+			phoneData= new DataInputStream(phoneSocket.getInputStream());
+		}
+			
+		catch (IOException e){
+			System.out.println(e);
+		}
+		
+	
+		
+	}
+
+		
+		
+		
+		
+		
+	}
+
+}
