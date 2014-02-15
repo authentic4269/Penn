@@ -24,6 +24,7 @@ public class Connection implements Runnable, SensorEventListener {
 	private SensorManager manager;
 	private PrintWriter out;
 	private BufferedReader in;
+	private int count = 0;
 	private boolean notify = false;
 	
 	public Connection(SensorManager m)
@@ -53,15 +54,25 @@ public class Connection implements Runnable, SensorEventListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		manager.registerListener(this, mRotationVectorSensor, 100000);
-		manager.registerListener(this, mLinearAccelerationSensor, 100000);
+		manager.registerListener(this, mRotationVectorSensor, SensorManager.SENSOR_DELAY_GAME);
+		manager.registerListener(this, mLinearAccelerationSensor, SensorManager.SENSOR_DELAY_GAME);
 	}
 	
-	public void notifyOrientation()
+	public void notifyLeftClick()
 	{
 		JSONObject ob = new JSONObject();
+		int code;
+		if (count > 3)
+		{
+			code = 3;
+		}
+		else 
+		{
+			code = 2;
+		}
+
 		try {
-			ob.put("type", 2);
+			ob.put("type", code);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

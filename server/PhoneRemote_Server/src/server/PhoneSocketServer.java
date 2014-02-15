@@ -43,7 +43,7 @@ public class PhoneSocketServer {
 					double[] vals = new double[3];
 					for (int i = 0; i < 3; i++)
 						vals[i] = array.getDouble(i);
-					controller.updateAcceleration(vals);
+					controller.addAcceleration(vals);
 				}
 				else if (vectorType == 2) {
 					controller.calibrate();

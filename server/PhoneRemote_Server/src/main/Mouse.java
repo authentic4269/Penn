@@ -16,6 +16,8 @@ public class Mouse {
 	double width;
 	LinkedList<Double> smoothx;
 	LinkedList<Double> smoothy;
+	final double screenWidth = .3589; //width of this machine's screen in meters
+	final double screenHeight = .2471; //height of this machine's screen in meters 
 	
 	public Mouse(double[][] canonicalOrientations) {
 		co = canonicalOrientations;
@@ -34,6 +36,13 @@ public class Mouse {
 		double x = width * (orientation[0] - co[1][0]) / (co[0][0] - co[1][0]);
 		double y = height * (orientation[1] - co[2][1]) / (co[3][1] - co[2][1]);
 		r.mouseMove((int) x, (int) y);
+	}
+	
+	public void updateCoordinates(double[] currentPosition){
+		
+		int newXCoord = (int) Math.floor((currentPosition[0]/screenWidth)*width);
+		int newYCoord = (int) (height - Math.floor((currentPosition[1]/screenHeight)*height));
+		r.mouseMove(newXCoord, newYCoord);
 	}
 
 }

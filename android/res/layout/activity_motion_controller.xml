@@ -4,17 +4,44 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <RelativeLayout
+   <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <ImageButton
-            android:id="@+id/imageButton1"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:src="@android:drawable/btn_radio" />
+            android:src="@drawable/mouse" />
+
+        <Button
+            android:id="@+id/button0"
+            android:layout_width="wrap_content"
+            android:layout_height="140dp"
+            android:layout_alignRight="@+id/imageView1"
+            android:layout_alignTop="@+id/imageView1"
+            android:layout_marginTop="24dp"
+            android:text="" />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="140dp"
+            android:layout_alignLeft="@+id/imageView1"
+            android:layout_alignTop="@+id/imageView1"
+            android:layout_marginTop="16dp"
+            android:text="" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="160dp"
+            android:layout_alignTop="@+id/button1"
+            android:layout_centerHorizontal="true"
+            android:text="" />
 
     </RelativeLayout>
 

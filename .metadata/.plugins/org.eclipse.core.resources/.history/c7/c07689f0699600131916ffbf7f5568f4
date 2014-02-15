@@ -1,0 +1,33 @@
+package main;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+
+public class Mouse {
+
+	double[][] co;
+	Robot r;
+	final double screenWidth = .3589; //width of this screen in meters
+	final double screenHeight = .2471; //height of this screen in meters 
+	
+	public Mouse(double[][] canonicalOrientations) {
+		co = canonicalOrientations;
+		try {
+			r = new Robot();
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void updateOrientation(double[] orientation) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void updateCoordinates(double[] currentPosition){
+		int newXCoord = *screenHeight
+		
+	}
+
+}
