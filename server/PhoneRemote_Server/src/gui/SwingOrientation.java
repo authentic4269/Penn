@@ -69,6 +69,7 @@ public class SwingOrientation extends Thread {
 			panel.add(label, BorderLayout.PAGE_START);
 		else if (i == 3)
 			panel.add(label, BorderLayout.PAGE_END);
+		frame.validate();
 	}
 
 	public void finish() {

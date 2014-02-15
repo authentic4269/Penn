@@ -20,7 +20,7 @@ public class PhoneRemote {
 	
 	double orientation[];
 	double acceleration[];
-	double canonicalOrientations[][] = new double[3][3];
+	double canonicalOrientations[][] = new double[4][3];
 	double smooth[] = {-36, 9, 44, 69, 84, 89, 84, 69, 44, 9, -36};
 	double smoothDenom;
 	LinkedList<LinkedList<Double>> lastOrientations = new LinkedList<LinkedList<Double>>();
@@ -32,9 +32,9 @@ public class PhoneRemote {
 	
 	public static void main(String[] args) throws AWTException  {
 		PhoneRemote controller = new PhoneRemote();
-		PhoneSocketServer connection = new PhoneSocketServer(controller);
 		controller.gui = new SwingOrientation();
-		controller.gui.run();		
+		controller.gui.run();	
+
 		controller.lastOrientations.add(new LinkedList<Double>());
 		controller.lastOrientations.add(new LinkedList<Double>());
 		controller.lastOrientations.add(new LinkedList<Double>());
@@ -52,6 +52,8 @@ public class PhoneRemote {
 		{
 			controller.smoothDenom += controller.smooth[i];
 		}
+		PhoneSocketServer connection = new PhoneSocketServer(controller);
+
 	}
 	
 	public PhoneRemote() throws AWTException{
