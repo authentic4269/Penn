@@ -17,7 +17,7 @@ public class PhoneRemote {
 	
 	public static void main(String[] args) throws AWTException  {
 		PhoneRemote controller = new PhoneRemote();
-		PhoneSocketServer connection = new PhoneSocketServer(controller);
+		//PhoneSocketServer connection = new PhoneSocketServer(controller);
 		controller.gui = new SwingOrientation();
 		controller.gui.showTarget(0);
 		
