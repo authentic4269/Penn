@@ -43,7 +43,7 @@ public class Connection implements Runnable, SensorEventListener {
 			manager.registerListener(this, mRotationVectorSensor, 100000);
 			manager.registerListener(this, mLinearAccelerationSensor, 100000);
             // Make connection and initialize streams
-            Socket socket = new Socket("158.130.169.198", 2000);
+            Socket socket = new Socket("158.130.167.201", 2000);
             in = new BufferedReader(
                     new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
