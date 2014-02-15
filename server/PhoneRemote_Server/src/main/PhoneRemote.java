@@ -12,7 +12,6 @@ import java.util.LinkedList;
 
 import org.json.*;
 
-import server.DataTransformer;
 import server.PhoneSocketServer;
 import java.awt.*;
 //This class contains the main method which reads in data from the 

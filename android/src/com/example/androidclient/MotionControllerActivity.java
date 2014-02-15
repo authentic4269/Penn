@@ -40,7 +40,7 @@ public class MotionControllerActivity extends Activity {
 		connection = new Connection((SensorManager)getSystemService(SENSOR_SERVICE));
 		this.conn = new Thread(connection);
 		setContentView(i);
-		ImageButton bt = (ImageButton) findViewById(R.id.imageButton1);
+		ImageButton bt = (ImageButton) findViewById(R.id.button1);
 		//this.conn.start();
 		
 		
@@ -48,7 +48,7 @@ public class MotionControllerActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				connection.notifyOrientation();
+				connection.notifyLeftClick();
 			}
 			
 		});
