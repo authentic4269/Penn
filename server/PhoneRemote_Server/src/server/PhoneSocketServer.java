@@ -40,10 +40,11 @@ public class PhoneSocketServer {
 				}
 				else if (vectorType == 1) {
 					JSONArray array = input.getJSONArray("data");
+					long time = input.getLong("time");
 					double[] vals = new double[3];
 					for (int i = 0; i < 3; i++)
 						vals[i] = array.getDouble(i);
-					controller.addAcceleration(vals);
+					controller.addAcceleration(vals, time);
 				}
 				else if (vectorType == 2) {
 					controller.calibrate();
