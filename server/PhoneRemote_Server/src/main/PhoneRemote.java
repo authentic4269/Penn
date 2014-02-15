@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
 
+import java.util.LinkedList;
+
 import org.json.*;
 
 import server.DataTransformer;
@@ -20,15 +22,34 @@ public class PhoneRemote {
 	double orientation[];
 	double acceleration[];
 	double canonicalOrientations[][] = new double[3][3];
+	double smooth[] = {-36, 9, 44, 69, 84, 89, 84, 69, 44, 9, -36};
+	double smoothDenom;
+	LinkedList<LinkedList<Double>> lastOrientations = new LinkedList<LinkedList<Double>>();
 	int calibrate = 0;
 	SwingOrientation gui;
 	
 	public static void main(String[] args)  {
 		PhoneRemote controller = new PhoneRemote();
-		//PhoneSocketServer connection = new PhoneSocketServer(controller);
+		PhoneSocketServer connection = new PhoneSocketServer(controller);
 		controller.gui = new SwingOrientation();
-		controller.gui.showTarget(0);
-		
+		controller.gui.run();		
+		controller.lastOrientations.add(new LinkedList<Double>());
+		controller.lastOrientations.add(new LinkedList<Double>());
+		controller.lastOrientations.add(new LinkedList<Double>());
+		controller.orientation = new double[3];
+		int i, j;
+		for (i = 0; i < 3; i++)
+		{
+			for (j = 0; j < 11; j++)
+			{
+				controller.lastOrientations.get(i).add(0.0);
+			}
+		}
+		controller.smoothDenom = 0.0;
+		for (i = 0; i < 11; i++)
+		{
+			controller.smoothDenom += controller.smooth[i];
+		}
 	}
 	
 	public PhoneRemote()
@@ -37,6 +58,21 @@ public class PhoneRemote {
 
 	public void updateOrientation(double[] vals) {
 		orientation = vals;
+		int i, j;
+		double smoothNumer;
+		LinkedList<Double> cur;
+		for (i = 0; i < 3; i++)
+		{
+			cur = lastOrientations.get(i);
+			cur.removeFirst();
+			cur.add(vals[i]);
+			smoothNumer = 0.0;
+			for (j = 0; j < 11; j++)
+			{
+				smoothNumer += smooth[j] * vals[i];
+			}
+			orientation[i] = smoothNumer / smoothDenom;
+		}
 	}
 
 	public void updateAcceleration(double[] vals) {
@@ -46,6 +82,9 @@ public class PhoneRemote {
 	}
 
 	public void calibrate() {
+		int i;
+		for (i = 0; i < 3; i++)
+			canonicalOrientations[calibrate][i] = orientation[i];
 		if (calibrate == 3)
 		{
 			gui.finish();

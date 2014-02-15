@@ -9,13 +9,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class SwingOrientation {
+public class SwingOrientation extends Thread {
 	
 	JLabel label;
 	JPanel panel;
 	JFrame frame;
 	
 	public SwingOrientation() {
+		
+	}
+	
+	public void run() {
 		frame = new JFrame("FrameDemo");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		panel = new JPanel(new BorderLayout());

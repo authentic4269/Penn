@@ -40,10 +40,12 @@ public class Connection implements Runnable, SensorEventListener {
 					.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
 			
-			manager.registerListener(this, mRotationVectorSensor, 100000);
-			manager.registerListener(this, mLinearAccelerationSensor, 100000);
-            // Make connection and initialize streams 158.130.169.198
-            Socket socket = new Socket("158.130.169.198", 3000);
+
+            // Make connection and initialize streams 
+			// christo 158.130.169.198
+			// acer 158.130.167.201
+			// macbook 158.130.161.209
+            Socket socket = new Socket("158.130.161.209", 3000);
             in = new BufferedReader(
                     new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
@@ -51,6 +53,8 @@ public class Connection implements Runnable, SensorEventListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		manager.registerListener(this, mRotationVectorSensor, 100000);
+		manager.registerListener(this, mLinearAccelerationSensor, 100000);
 	}
 	
 	public void notifyOrientation()
