@@ -18,22 +18,35 @@ import java.awt.*;
 public class PhoneRemote {
 	
 	double orientation[];
+	double lastAcceleration[];
+	long lastTime;
 	double canonicalOrientations[][] = new double[4][3];
 	double smooth[] = {-36, 9, 44, 69, 84, 89, 84, 69, 44, 9, -36};
+	double smooth2[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
 	double smoothDenom;
+	double smooth2Denom;
 	LinkedList<LinkedList<Double>> lastOrientations = new LinkedList<LinkedList<Double>>();
+	LinkedList<StampedList> lastAccels = new LinkedList<StampedList>();
 	int calibrate = 0;
 	SwingOrientation gui;
 	private Mouse mouse = null;
 	
 	//acceleration related fields
 	final double delay = .02;
-	final int numAccels = 5;  //number of acceleration points which will be averaged into one (for low-pass filtering)
 	
-	LinkedList<double[]> accelsToAvg;  //will contain the last "numAccel" raw acceleration vectors from the socket
-	double[] prevAccel;  //will contain the two most recent FILTERED acceleration vectors 
-	double[] prevVelocity;  //will contain the most recent velocity vector 
-	double[] prevPosition;  //contains the most recent coordinates of the phone relative to the bottom left corner of the computer screen 
+	private class StampedList {
+		public LinkedList<Double> values;
+		public long timeStamp;
+		
+		public StampedList()
+		{
+			values = new LinkedList<Double>();
+		}
+	}
+	
+	double[] prevVelocity = {0.0, 0.0, 0.0};  //will contain the most recent velocity vector 
+	double[] prevPosition; //contains the most recent coordinates of the phone relative to the bottom left corner of the computer screen 
+	private long prevTime = System.currentTimeMillis();
 	
 	
 	public static void main(String[] args) throws AWTException  {
@@ -49,10 +62,32 @@ public class PhoneRemote {
 		initializeAccelerationFields();
 	}
 	
+	private void initializeAccelerationFields() {
+
+		int i, j;
+		prevVelocity = new double[3];
+		prevPosition = new double[3];
+		lastAcceleration = new double[3];
+		for (i = 0; i < 3; i++)
+		{
+			lastAccels.add(new StampedList());
+			for (j = 0; j < 10; j++)
+			{
+				lastAccels.get(i).values.add(0.0);
+			}
+		}
+		for (i = 0; i < 10; i++)
+		{
+			smooth2Denom += smooth2[i];
+		}
+	}
+
+
 	private void initializeOrientationFields(){
 		lastOrientations.add(new LinkedList<Double>());
 		lastOrientations.add(new LinkedList<Double>());
 		lastOrientations.add(new LinkedList<Double>());
+		prevTime = 0;
 		orientation = new double[3];
 		int i, j;
 		for (i = 0; i < 3; i++)
@@ -67,13 +102,7 @@ public class PhoneRemote {
 		{
 			smoothDenom += smooth[i];
 		}
-	}
-	
-	private void initializeAccelerationFields(){
-		prevVelocity = new double[3];
-		prevAccel = new double[3];
-		prevPosition = new double[3];
-		accelsToAvg = new LinkedList<double[]>();
+
 	}
 
 	public void updateOrientation(double[] vals){
@@ -99,53 +128,49 @@ public class PhoneRemote {
 		}
 	}
 
-	public void addAcceleration(double[] vals) {
-		accelsToAvg.add(vals);
-		if(accelsToAvg.size() == 5){
-			double[] currentAccel = averageAccel();
-			double[] currentVelocity = updateVelocity(prevAccel, currentAccel);
-			prevAccel = currentAccel;
-			double[] currentPosition = updatePosition(prevVelocity, currentVelocity);
-			prevVelocity= currentVelocity;
-			prevPosition = currentPosition;
-			accelsToAvg.clear();
+	public void addAcceleration(double[] vals, long time) {
+		StampedList cur;
+		int i, j;
+		double smoothNumer;
+		double curAcceleration[] = new double[3];
+		for (i = 0; i < 3; i++)
+		{
+			cur = lastAccels.get(i);
+			cur.values.removeFirst();
+			cur.values.add(vals[i]);
+			cur.timeStamp = time;
+			smoothNumer = 0.0;
+			for (j = 0; j < 10; j++)
+			{
+				smoothNumer += smooth2[j] * vals[i];
+			}
+			smoothNumer /= smooth2Denom;
+			curAcceleration[i] = smoothNumer;
+			prevTime  = time;
+			
 		}
+		lastAcceleration = curAcceleration;
 	}
 	
-	private double[] updatePosition(double[] prevVelocity, double[] currVelocity){
+	private double[] updatePosition(double[] prevVelocity, double[] currVelocity, double prevTime, double curTime){
 		double[] newPosition = new double[3];
 		for(int i= 0; i<3; i++){
-			newPosition[i] = prevPosition[i] + trapezoidArea(prevVelocity[i], currVelocity[i]);
+			newPosition[i] = prevPosition[i] + trapezoidArea(prevVelocity[i], currVelocity[i], prevTime, curTime);
 		}
-		mouse.updateCoordinates(newPosition);
 		return newPosition;
 	}
 	
-	private double[] updateVelocity(double[] prevAccel, double[] currAccel){
+	private double[] updateVelocity(double[] prevAccel, double[] currAccel, double prevTime, double curTime){
 		double[] newVelocity= new double[3];
 		for(int i= 0; i<3; i++){
-			newVelocity[i] = trapezoidArea(prevAccel[i], currAccel[i]);
+			newVelocity[i] = trapezoidArea(prevAccel[i], currAccel[i], prevTime, curTime);
 		}
 		
 		return newVelocity;
 	}
-	private double trapezoidArea(double start, double end){
-		return (start + ((end - start)/2))*delay;
-	}
 	
-	private double[] averageAccel(){
-		double[] avgAccel = new double[3];
-		for(double[] accelVec : accelsToAvg){
-			for (int i = 0; i<3; i++){
-				avgAccel[i] += accelVec[i];
-			}
-		}
-		for(int j= 0; j<3; j++){
-			avgAccel[j] = avgAccel[j] / numAccels;
-		}
-		
-		return avgAccel;
-		
+	private double trapezoidArea(double start, double end, double startTime, double endTime){
+		return (start + ((end - start)/2))*(endTime - startTime)/1000;
 	}
 
 	public void calibrate() {
@@ -163,8 +188,13 @@ public class PhoneRemote {
 		}
 	}
 	
-	public void refreshMouse(){
-		
-		
+
+
+	public void leftclick() {
+		mouse.leftclick();
+	}
+	
+	public void rightclick() {
+		mouse.rightclick();
 	}
 }
