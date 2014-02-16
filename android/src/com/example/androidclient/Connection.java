@@ -24,6 +24,7 @@ public class Connection implements Runnable, SensorEventListener {
 	private SensorManager manager;
 	private PrintWriter out;
 	private BufferedReader in;
+	private int count = 0;
 	private boolean notify = false;
 	
 	public Connection(SensorManager m)
@@ -35,15 +36,17 @@ public class Connection implements Runnable, SensorEventListener {
 	public void run() {
 		try {
 			mRotationVectorSensor = manager
-					.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+					.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 			mLinearAccelerationSensor = manager
 					.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
 			
-			manager.registerListener(this, mRotationVectorSensor, 100000);
-			manager.registerListener(this, mLinearAccelerationSensor, 100000);
-            // Make connection and initialize streams
-            Socket socket = new Socket("158.130.167.201", 2000);
+
+            // Make connection and initialize streams 
+			// christo 158.130.169.198
+			// acer 158.130.167.201
+			// macbook 158.130.161.209
+            Socket socket = new Socket("158.130.161.209", 3000);
             in = new BufferedReader(
                     new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
@@ -51,13 +54,25 @@ public class Connection implements Runnable, SensorEventListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		manager.registerListener(this, mRotationVectorSensor, SensorManager.SENSOR_DELAY_GAME);
+		manager.registerListener(this, mLinearAccelerationSensor, SensorManager.SENSOR_DELAY_GAME);
 	}
 	
-	public void notifyOrientation()
+	public void notifyLeftClick()
 	{
 		JSONObject ob = new JSONObject();
+		int code;
+		if (count > 3)
+		{
+			code = 3;
+		}
+		else 
+		{
+			code = 2;
+		}
+
 		try {
-			ob.put("type", 2);
+			ob.put("type", code);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -76,7 +91,7 @@ public class Connection implements Runnable, SensorEventListener {
 		// that we received the proper event
 		JSONObject ob = new JSONObject();
 		int i;
-		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+		if (event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
 			try {
 				ob.put("type", 0);
 				JSONArray arr = new JSONArray();

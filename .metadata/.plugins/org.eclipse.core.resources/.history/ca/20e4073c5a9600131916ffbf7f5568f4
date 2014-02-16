@@ -1,0 +1,124 @@
+package main;
+
+import gui.SwingOrientation;
+import java.awt.AWTException;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.*;
+
+import java.util.LinkedList;
+
+import org.json.*;
+
+import server.PhoneSocketServer;
+import java.awt.*;
+//This class contains the main method which reads in data from the 
+public class PhoneRemote {
+	
+	double orientation[];
+	double canonicalOrientations[][] = new double[4][3];
+	double smooth[] = {-36, 9, 44, 69, 84, 89, 84, 69, 44, 9, -36};
+	double smoothDenom;
+	LinkedList<LinkedList<Double>> lastOrientations = new LinkedList<LinkedList<Double>>();
+	int calibrate = 0;
+	SwingOrientation gui;
+	private Mouse mouse = null;
+	
+	//acceleration related fields
+	final double delay = .02;
+	final int numAccel = 5;  //number of acceleration points which will be averaged into one (for low-pass filtering)
+	double prevVelocity;
+	LinkedList<double[]> accelsToAvg;  //will contain the last "numAccel" raw acceleration vectors from the socket
+	double[][] lastAccels;  //will contain the two most recent FILTERED acceleration vectors 
+	
+	
+	
+	public static void main(String[] args) throws AWTException  {
+		PhoneRemote controller = new PhoneRemote();
+		PhoneSocketServer connection = new PhoneSocketServer(controller);
+	}
+	
+
+	public PhoneRemote() throws AWTException{
+		gui = new SwingOrientation();
+		gui.run();	
+		initializeOrientationFields();
+	}
+	
+	private void initializeOrientationFields(){
+		lastOrientations.add(new LinkedList<Double>());
+		lastOrientations.add(new LinkedList<Double>());
+		lastOrientations.add(new LinkedList<Double>());
+		orientation = new double[3];
+		int i, j;
+		for (i = 0; i < 3; i++)
+		{
+			for (j = 0; j < 11; j++)
+			{
+				lastOrientations.get(i).add(0.0);
+			}
+		}
+		smoothDenom = 0.0;
+		for (i = 0; i < 11; i++)
+		{
+			smoothDenom += smooth[i];
+		}
+	}
+	
+	private void initializeAccelerationFields(){
+		prevVelocity = 0;
+		lastAccels = new double[2][3];
+	}
+
+	public void updateOrientation(double[] vals) {
+		orientation = vals;
+		int i, j;
+		double smoothNumer;
+		LinkedList<Double> cur;
+		for (i = 0; i < 3; i++)
+		{
+			cur = lastOrientations.get(i);
+			cur.removeFirst();
+			cur.add(vals[i]);
+			smoothNumer = 0.0;
+			for (j = 0; j < 11; j++)
+			{
+				smoothNumer += smooth[j] * vals[i];
+			}
+			orientation[i] = smoothNumer / smoothDenom;
+		}
+		if (mouse != null)
+		{
+			mouse.updateOrientation(orientation);
+		}
+	}
+
+	public void addAcceleration(double[] vals) {
+		acceleration = vals;
+	
+	}
+	
+	private
+
+	public void calibrate() {
+		int i;
+		for (i = 0; i < 3; i++)
+			canonicalOrientations[calibrate][i] = orientation[i];
+		if (calibrate == 3)
+		{
+			gui.finish();
+			mouse = new Mouse(canonicalOrientations);
+		}
+		else 
+		{
+			gui.showTarget(++calibrate);
+		}
+	}
+	
+	public void refreshMouse(){
+		
+		
+	}
+}
