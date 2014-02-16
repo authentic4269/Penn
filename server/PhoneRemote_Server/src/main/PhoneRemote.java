@@ -147,13 +147,7 @@ public class PhoneRemote {
 			}
 			smoothNumer /= smooth2Denom;
 			curAcceleration[i] = smoothNumer;
-		
-			double[] currentVelocity = updateVelocity(lastAcceleration, curAcceleration, prevTime, time);
-			
-			double[] currentPosition = updatePosition(prevVelocity, currentVelocity, prevTime, time);
 			prevTime  = time;
-			prevVelocity= currentVelocity;
-			prevPosition = currentPosition;
 			
 		}
 		lastAcceleration = curAcceleration;
@@ -164,7 +158,6 @@ public class PhoneRemote {
 		for(int i= 0; i<3; i++){
 			newPosition[i] = prevPosition[i] + trapezoidArea(prevVelocity[i], currVelocity[i], prevTime, curTime);
 		}
-		mouse.updateCoordinates(newPosition);
 		return newPosition;
 	}
 	
@@ -198,6 +191,12 @@ public class PhoneRemote {
 	
 	public void refreshMouse(){
 		
+		
+	}
+
+
+	public void leftclick() {
+		mouse.leftclick();
 		
 	}
 }
