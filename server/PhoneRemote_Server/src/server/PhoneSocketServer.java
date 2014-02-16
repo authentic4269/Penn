@@ -52,6 +52,9 @@ public class PhoneSocketServer {
 				else if (vectorType == 3) {
 					controller.leftclick();
 				}
+				else if (vectorType == 4) {
+					controller.rightclick();
+				}
 					
 			}
 		}

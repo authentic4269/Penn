@@ -50,12 +50,23 @@ public class Mouse {
 	}
 
 	public void leftclick() {
-		
 		r.mousePress(InputEvent.BUTTON1_MASK);
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		r.mouseRelease(InputEvent.BUTTON1_MASK);
 	}
 	
 	public void rightclick() {
-		r.mousePress(InputEvent.BUTTON2_MASK);
+			r.mousePress(InputEvent.BUTTON3_MASK);
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			r.mouseRelease(InputEvent.BUTTON3_MASK);
 	}
 
 }

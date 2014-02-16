@@ -60,7 +60,6 @@ public class PhoneRemote {
 		gui.run();	
 		initializeOrientationFields();
 		initializeAccelerationFields();
-		mouse = new Mouse(canonicalOrientations);
 	}
 	
 	private void initializeAccelerationFields() {
@@ -189,14 +188,13 @@ public class PhoneRemote {
 		}
 	}
 	
-	public void refreshMouse(){
-		
-		
-	}
 
 
 	public void leftclick() {
 		mouse.leftclick();
-		
+	}
+	
+	public void rightclick() {
+		mouse.rightclick();
 	}
 }
