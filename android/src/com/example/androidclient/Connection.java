@@ -24,7 +24,7 @@ public class Connection implements Runnable, SensorEventListener {
 	private SensorManager manager;
 	private PrintWriter out;
 	private BufferedReader in;
-	private int count = 0;
+	private int count;
 	private boolean notify = false;
 	
 	public Connection(SensorManager m)
@@ -40,7 +40,7 @@ public class Connection implements Runnable, SensorEventListener {
 			mLinearAccelerationSensor = manager
 					.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
-			
+			count = 0;
 
             // Make connection and initialize streams 
 			// christo 158.130.169.198
@@ -51,7 +51,6 @@ public class Connection implements Runnable, SensorEventListener {
                     new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		manager.registerListener(this, mRotationVectorSensor, SensorManager.SENSOR_DELAY_GAME);
@@ -64,17 +63,18 @@ public class Connection implements Runnable, SensorEventListener {
 		int code;
 		if (count > 3)
 		{
+			
 			code = 3;
 		}
 		else 
 		{
+			count++;
 			code = 2;
 		}
 
 		try {
 			ob.put("type", code);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		out.println(ob.toString());
@@ -82,7 +82,6 @@ public class Connection implements Runnable, SensorEventListener {
 
 	@Override
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -111,12 +110,35 @@ public class Connection implements Runnable, SensorEventListener {
 				for (i = 0; i < 3; i++)
 					arr.put(event.values[i]);
 				ob.put("data", arr);
+				ob.put("time", System.currentTimeMillis());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		out.println(ob.toString());
+	}
+
+	public void notifyRightClick() {
+		JSONObject ob = new JSONObject();
+		try {
+			ob.put("type", 4);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		out.println(ob.toString());
+	}
+
+	public void sendWheel(float dist, int i) {
+		JSONObject ob = new JSONObject();
+		try {
+			ob.put("type", 5);
+			ob.put("data", (int) (dist / 10.0));
+			ob.put("down", i);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 
 	
